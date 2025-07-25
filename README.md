@@ -61,8 +61,8 @@ with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
 I created an additional entitled `longitudinal_analysis.py` to log commute times to/from work at regular intervals each 
 work day. I'm running these in a cron job from my laptop using,
 ```cron
-*/30 * * * 1-5  /bin/bash -c 'cd <directory> && <directory>/.local/bin/uv run <directory>/longitudinal_study.py
-0 16 * * 5 /bin/bash -c 'cd  <directory> &&  <directory>/.local/bin/uv run  <directory>/longitudinal_study.py --notify
+*/30 * * * 1-5  /bin/bash -c 'cd <directory> && <directory>/.local/bin/uv run <directory>/longitudinal_study.py'
+0 16 * * 5 /bin/bash -c 'cd  <directory> &&  <directory>/.local/bin/uv run  <directory>/longitudinal_study.py --notify'
 ```
 Every 30 minutes, the script will record the commute times and save it to a CSV specified in my `.env` file. Then,
 on Fridays at 4 PM, the script will send me a summary of the commute time fluctuation throughout the week 
