@@ -25,6 +25,8 @@ export HOME_ADDRESS=<...>
 export WORK_ADDRESS=<...>
 export PHONE_NUMBER=<...>
 export EMAIL=<...>
+CSV_FILE=<...>
+LOGFILE=<...>
 ```
 
 ## API references
