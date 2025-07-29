@@ -5,8 +5,11 @@ import logging
 import os
 import requests
 
-import googlemaps
 from dotenv import load_dotenv
+import googlemaps
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import pandas as pd
 
 from smtp import send_sms_via_email
 
@@ -123,10 +126,15 @@ def log_commute_times() -> None:
         logging.error(f"Failed to write to CSV: {e}", exc_info=True)
 
 
-def plot_commute_times(df: pandas.DataFrame, column: str, title: str, filename: str) -> None:
+def plot_commute_times(df: pd.DataFrame, column: str, title: str, filename: str) -> None:
     """
     Will save an plot of the commute graph over each day, computed at the end of the week.
     Work in progress! Lots to refine here.
+
+    TODO: known error with mdates as an x axis ticker, e.g.
+    "ax.xaxis.set_major_locator(mdates.HourLocator(interval=2))" yields
+    2025-07-28 23:13:21,249 [WARNING] Locator attempting to generate 19272 ticks ([10155.041666666666, ...,
+        11760.958333333334]), which exceeds Locator.MAXTICKS (1000).
 
     :return:
     """
@@ -141,6 +149,8 @@ def plot_commute_times(df: pandas.DataFrame, column: str, title: str, filename: 
     fig, ax = plt.subplots(figsize=(12, 6))
     for day in colors.keys():
         subset = df[df["day"] == day]
+        if len(subset)==0:
+            continue
         ax.plot(
             subset["time_of_day"],
             subset[column],
