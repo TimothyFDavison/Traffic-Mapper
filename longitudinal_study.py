@@ -70,7 +70,7 @@ def get_drive_time_routes_api(origin: str, destination: str) -> str:
         },
         "travelMode": "DRIVE",
         "routingPreference": "TRAFFIC_AWARE_OPTIMAL",
-        "departureTime": (datetime.now(timezone.utc) + timedelta(minutes=2)).isoformat(),  # offset, datetime.now fails
+        "departureTime": (datetime.now(timezone.utc)+timedelta(minutes=2)).isoformat(),  # offset, datetime.now fails
         "computeAlternativeRoutes": False
     }
 
@@ -123,12 +123,75 @@ def log_commute_times() -> None:
         logging.error(f"Failed to write to CSV: {e}", exc_info=True)
 
 
+def plot_commute_times(df: pandas.DataFrame, column: str, title: str, filename: str) -> None:
+    """
+    Will save an plot of the commute graph over each day, computed at the end of the week.
+    Work in progress! Lots to refine here.
+
+    :return:
+    """
+    # Select data
+    colors = {
+        "Monday": "yellow",
+        "Tuesday": "green",
+        "Wednesday": "blue",
+        "Thursday": "indigo",
+        "Friday": "violet"
+    }
+    fig, ax = plt.subplots(figsize=(12, 6))
+    for day in colors.keys():
+        subset = df[df["day"] == day]
+        ax.plot(
+            subset["time_of_day"],
+            subset[column],
+            label=day,
+            color=colors[day],
+            alpha=0.7,
+        )
+
+    # Set up plot
+    ax.set_title(title)
+    ax.set_xlabel("Time of Day")
+    ax.set_ylabel("Drive Time (hours)")
+
+    # Axis bounds and labels
+    ax.set_ylim(0.5, 2)
+    y_ticks = [0.5, 1.0, 1.5, 2.0]
+    ax.set_yticks(y_ticks)
+    ax.set_yticklabels([f"{int(t * 60)}" for t in y_ticks])
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval=2))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+    plt.xticks(rotation=45)
+
+    # Finish plot and save
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig(filename)
+
+
 def analyze_commute_times() -> None:
     """
     TODO: provide descriptive statistics and departure recommendation times based on discovered patterns.
+    Work in progress! Lots to refine here.
 
     :return: empty, runs on --notify
     """
+    # Read in the CSV
+    df = pd.read_csv(CSV_FILE, header=None)
+    df.columns = ["timestamp", "day", "home_to_work", "work_to_home"]
+
+    # Data formatting
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["time_only"] = df["timestamp"].dt.time
+    df["home_to_work"] = df["home_to_work"] / 3600
+    df["work_to_home"] = df["work_to_home"] / 3600
+    df["time_of_day"] = df["time_only"].apply(lambda t: datetime.combine(datetime(2000, 1, 1), t))
+
+    # Save graphs
+    plot_commute_times(df, "home_to_work", "Home to Work",
+                       f"home_to_work-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
+    plot_commute_times(df, "work_to_home", "Work to Home",
+                       f"work_to_home-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
 
 
 def notify() -> None:
