@@ -198,10 +198,10 @@ def analyze_commute_times() -> None:
     df["time_of_day"] = df["time_only"].apply(lambda t: datetime.combine(datetime(2000, 1, 1), t))
 
     # Save graphs
-    plot_commute_times(df, "home_to_work", "Home to Work",
-                       f"home_to_work-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
-    plot_commute_times(df, "work_to_home", "Work to Home",
-                       f"work_to_home-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
+    # plot_commute_times(df, "home_to_work", "Home to Work",
+    #                    f"home_to_work-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
+    # plot_commute_times(df, "work_to_home", "Work to Home",
+    #                    f"work_to_home-{datetime.now().strftime('%B-%d-%Y').lower()}.jpeg")
 
 
 def notify() -> None:
