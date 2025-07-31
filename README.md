@@ -19,12 +19,12 @@ uv run main.py
 Importantly, `main.py` expects the following environment variables to be set or managed in a 
 `.env` file:
 ```bash
-export GOOGLE_MAPS_API_KEY=<...>
-export GOOGLE_TOKEN=<...>
-export HOME_ADDRESS=<...>
-export WORK_ADDRESS=<...>
-export PHONE_NUMBER=<...>
-export EMAIL=<...>
+GOOGLE_MAPS_API_KEY=<...>
+GOOGLE_TOKEN=<...>
+HOME_ADDRESS=<...>
+WORK_ADDRESS=<...>
+PHONE_NUMBER=<...>
+EMAIL=<...>
 CSV_FILE=<...>
 LOGFILE=<...>
 ```
